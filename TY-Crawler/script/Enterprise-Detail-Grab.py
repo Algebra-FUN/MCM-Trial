@@ -1,5 +1,6 @@
 from selenium import webdriver
 import time as t
+import json
 
 e_ids = []
 with open('./TY-Crawler/storage/target_enterprise_id_list.txt', 'r') as f:
@@ -235,3 +236,8 @@ for e_id in e_ids:
     } 
 
 print(all_data)
+
+
+output = json.dumps(all_data)
+with open('./TY-Crawler/storage/data.json','w') as f:
+    f.write(output)

@@ -3,7 +3,7 @@ import time as t
 import json
 
 e_ids = []
-with open('./TY-Crawler/storage/target_enterprise_id_list.txt', 'r') as f:
+with open('.TY-Crawler/storage/target_enterprise_id_list.txt', 'r') as f:
     e_ids = [line.strip('\n') for line in f.readlines()]
 
 url_template = 'https://www.tianyancha.com/company/{}'
@@ -181,15 +181,16 @@ def gudongxinxi():
                     if '股权结构' not in vip_link.text:
                         continue
                     link = td.find_element_by_css_selector('a.link-click')
+                    driver.execute_script('arguments[0].click();', link)
                     company = link.text
                     driver.switch_to.window(driver.window_handles[1])
                     t.sleep(0.5)
-                    risk1 = driver.find_element_by_xpath('/html/body/div[2]/div/div/div[1]/div[2]/div/div[1]/div[2]/span').text
-                    risk2 = driver.find_element_by_xpath('/html/body/div[2]/div/div/div[1]/div[2]/div/div[1]/div[2]/span').text
-                    print(peo,risk1,risk2)
+                    risk1 = driver.find_element_by_xpath('//*[@id="_container_company_panel"]/div[2]/div[1]/div[2]/span').text
+                    risk2 = driver.find_element_by_xpath('//*[@id="_container_company_panel"]/div[2]/div[1]/div[3]/span').text
+                    print(company,risk1,risk2)
                     data.append({
                         'name':company,
-                        'risk':risk1+risk2
+                        'risk':int(risk1)+int(risk2)
                     })
                     driver.close()
                     driver.switch_to.window(main_handle)
@@ -211,7 +212,7 @@ t.sleep(2)
 driver.find_element_by_xpath(
     '//*[@id="web-content"]/div/div[2]/div/div[2]/div/div[3]/div[1]/div[2]').click()
 driver.find_element_by_xpath(
-    '//*[@id="web-content"]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/input').send_keys('15882418677')
+    '//*[@id="web-content"]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/input').send_keys('17627669810')
 driver.find_element_by_xpath(
     '//*[@id="web-content"]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/input').send_keys('zaq1234567890')
 driver.find_element_by_xpath(
@@ -221,19 +222,18 @@ input('wait for labor to login,hit any key to continue')
 
 all_data = {}
 
-for e_id in e_ids:
+for i,e_id in enumerate(e_ids):
+    if i > 10:
+        break
     driver.get(url_template.format(e_id))
     print('id', e_id)
-    """ all_data['e_id'] = {
+    all_data[e_id] = {
+        'gudongxinxi':gudongxinxi(),
         'jingyingyichang': jingyingyichang(),
         'biangengjilu': biangengjilu(),
         'guquanchuzhi':guquanchuzhi(),
-        'zhuyaorenyuan':zhuyaorenyuan(),
-        'gudongxinxi':gudongxinxi()
-    } """
-    all_data['e_id'] = {
-        'gudongxinxi':gudongxinxi()
-    } 
+        'zhuyaorenyuan':zhuyaorenyuan()
+    }
 
 print(all_data)
 

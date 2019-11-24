@@ -19,7 +19,7 @@ A = np.array(M)
 # 对 A 标准化
 for j in range(M.shape[1]):
     # 标准化列向量
-    A[:,j] = StandardScaler().fit_transform(A[:,j].reshape(-1,1)).flatten()
+    A[:, j] = StandardScaler().fit_transform(A[:, j].reshape(-1, 1)).flatten()
 
 # 主成分分析
 pca.fit(A)
@@ -29,29 +29,40 @@ eta_g = pca.get_covariance()
 # 贡献度组:Vector
 ratio_v = pca.explained_variance_ratio_
 
-print('eta_g',eta_g)
-print('ratio_v',ratio_v)
-
 # 标准化变量回归方程参数组：Vector
-SVRECG = ratio_v.reshape(1,-1) @ eta_g
+SVRECG = ratio_v.reshape(1, -1) @ eta_g
 
 # 计算原始变量的主成分回归方程
-# 常数项
-CIORE = np.average(M)
+# 列向量算术平均值 mu 组 :Vector
+mu_g = np.array([np.average(M[:,j]) for j in range(M.shape[1])])
 # 列向量方差 Sigma 组：Vector
-sigma_g = np.array([np.std(M[:,j],ddof=1) for j in range(M.shape[1])])
+sigma_g = np.array([np.std(M[:, j], ddof=1) for j in range(M.shape[1])])
 # 原始变量的主成分回归方程参数组：Vector
 OVPCARECG = SVRECG @ np.diag(sigma_g)
-
-# Print on screen
-print('OVPCARECG',OVPCARECG)
-print('CIORE',CIORE)
+# 常数项
+C = mu_g.reshape(1,-1) @ OVPCARECG.reshape(-1,1)
 
 # 综合指数 组：Vector
-INDEX_g = M @ (OVPCARECG.reshape(-1,1)) + CIORE
-
-print('INDEX_g',INDEX_g)
+INDEX_g = M @ (OVPCARECG.reshape(-1, 1)) + C
 
 # 综合指数等级 组：Vector
 INDEX_LOG_g = np.log10(INDEX_g)
+
+with open('./Analysis/storage/INDEX-list.txt', 'w') as f:
+    for item in INDEX_g:
+        f.write('{}\n'.format(str(item[0])))
+
+with open('./Analysis/storage/INDEX_LOG-list.txt', 'w') as f:
+    for item in INDEX_LOG_g:
+        f.write('{}\n'.format(str(item[0])))
+
 print(INDEX_LOG_g)
+
+# huazhu = '0,48,2,256.5,21;0,48,2.45,256.5,35;0,48,2,256.5,58;0,48,2.4,256.5,97;0,48,2.5,256.5,137;0,48,2.5,256.5,160'
+# huazhu_M = np.array(list(
+#     [list([float(txt) for txt in row.split(',')]) for row in huazhu.split(';')]))
+
+# INDEX_L = huazhu_M.reshape(-1, M.shape[1]) @ (OVPCARECG.reshape(-1, 1)) + C
+# INDEX_LOG_L = np.log10(INDEX_L)
+# print('INDEX_L',INDEX_L)
+# print('INDEX_LOG_L',INDEX_LOG_L)

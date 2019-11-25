@@ -1,1 +1,1 @@
-f.writelines(['{}\n'.format('-'.join(item)) for item in enterprises])
+.reshape(-1,1)

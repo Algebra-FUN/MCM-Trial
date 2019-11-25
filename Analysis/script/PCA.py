@@ -62,7 +62,8 @@ print(INDEX_LOG_g)
 # huazhu_M = np.array(list(
 #     [list([float(txt) for txt in row.split(',')]) for row in huazhu.split(';')]))
 
+# huazhu_M = np.array([[0,13,10.5,39.625,0],[0,13,11,39.625,0],[0,13,10.5,39.625,0],[0,13,7.33,39.625,0],[0,13,5.5,39.625,0],[0,13,5.5,39.625,0]])
 # INDEX_L = huazhu_M.reshape(-1, M.shape[1]) @ (OVPCARECG.reshape(-1, 1)) + C
-# INDEX_LOG_L = np.log10(INDEX_L)
+# RELATE_INDEX_L = INDEX_L / 1000
 # print('INDEX_L',INDEX_L)
-# print('INDEX_LOG_L',INDEX_LOG_L)
+# print('RELATE_INDEX_L',RELATE_INDEX_L)
